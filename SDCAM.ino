@@ -1,3 +1,7 @@
+/*********
+  
+*********/
+
 #include "esp_camera.h"
 #include "FS.h"                // SD Card ESP32
 #include "SD_MMC.h"            // SD Card ESP32
@@ -8,11 +12,11 @@
 #include "time.h"
 
 // REPLACE WITH YOUR NETWORK CREDENTIALS
-const char* ssid = "REPLACE_WITH_YOUR_SSID";
-const char* password = "REPLACE_WITH_YOUR_PASSWORD";
+const char* ssid = "PICAIORED";
+const char* password = "P1c410r3d";
 
 // REPLACE WITH YOUR TIMEZONE STRING: https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
-String myTimezone ="WET0WEST,M3.5.0/1,M10.5.0";
+String myTimezone ="<-05>5";
 
 // Pin definition for CAMERA_MODEL_AI_THINKER
 // Change pin definition if you're using another ESP32 camera module
@@ -161,4 +165,39 @@ void takeSavePhoto(){
   
   // Save picture to microSD card
   fs::FS &fs = SD_MMC; 
-  File
+  File file = fs.open(path.c_str(),FILE_WRITE);
+  if(!file){
+    Serial.printf("Failed to open file in writing mode");
+  } 
+  else {
+    file.write(fb->buf, fb->len); // payload (image), payload length
+    Serial.printf("Saved: %s\n", path.c_str());
+  }
+  file.close();
+  esp_camera_fb_return(fb); 
+}
+
+void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
+
+  Serial.begin(115200);
+  delay(2000);
+
+  // Initialize Wi-Fi
+  initWiFi();
+  // Initialize time with timezone
+  initTime(myTimezone);    
+  // Initialize the camera  
+  Serial.print("Initializing the camera module...");
+  configInitCamera();
+  Serial.println("Ok!");
+  // Initialize MicroSD
+  Serial.print("Initializing the MicroSD card module... ");
+  initMicroSDCard();
+}
+
+void loop() {    
+  // Take and Save Photo
+  takeSavePhoto();
+  delay(10000);
+}
