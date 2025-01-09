@@ -12,8 +12,8 @@
 #include "time.h"
 
 // REPLACE WITH YOUR NETWORK CREDENTIALS
-const char* ssid = "PICAIORED";
-const char* password = "P1c410r3d";
+const char* ssid = "RED";
+const char* password = "CONTRA";
 
 // REPLACE WITH YOUR TIMEZONE STRING: https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
 String myTimezone ="<-05>5";
